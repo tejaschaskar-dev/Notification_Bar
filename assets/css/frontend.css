@@ -1,0 +1,131 @@
+/**
+ * Simple Notification Bar — Frontend Styles
+ *
+ * The bar is fixed to the top of the viewport so it stays visible
+ * even when the user scrolls. A high z-index ensures it sits above
+ * theme headers and sticky navbars.
+ *
+ * The background color is applied via an inline style in PHP so it
+ * can be dynamic (set by the admin). Everything else lives here.
+ *
+ * @package SimpleNotificationBar
+ */
+
+/* ── Bar container ─────────────────────────────────────────────── */
+#snb-notification-bar {
+	/* Layout */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* Fixed to the very top of the viewport */
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	z-index: 99999; /* Above theme headers and admin bar */
+
+	/* Spacing */
+	padding: 10px 48px 10px 16px; /* Right padding reserves room for the × button */
+	box-sizing: border-box;
+
+	/* Typography */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #ffffff;
+	text-align: center;
+
+	/* Entrance animation — fades in on page load */
+	animation: snb-fade-in 0.4s ease forwards;
+}
+
+/* ── Bar text ──────────────────────────────────────────────────── */
+.snb-bar-text {
+	flex: 1;
+	margin: 0;
+	padding: 0;
+	word-break: break-word;
+}
+
+/* ── Dismiss (×) button ────────────────────────────────────────── */
+.snb-dismiss-btn {
+	/* Reset all browser button defaults */
+	all: unset;
+	cursor: pointer;
+
+	/* Position in the top-right of the bar */
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	transform: translateY(-50%);
+
+	/* Sizing and visual */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	font-size: 16px;
+	line-height: 1;
+	color: inherit;
+	opacity: 0.75;
+	transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.snb-dismiss-btn:hover,
+.snb-dismiss-btn:focus-visible {
+	opacity: 1;
+	background-color: rgba(0, 0, 0, 0.2);
+	outline: 2px solid rgba(255, 255, 255, 0.6); /* Keyboard-focus ring */
+}
+
+/* ── Compensate for the fixed bar height ───────────────────────── */
+/*
+ * Pushes the <body> content down so the bar does not overlap
+ * the first visible element on the page. The 46px default
+ * covers most single-line bars; adjust if you change padding/font-size.
+ */
+body.snb-bar-visible {
+	margin-top: 46px;
+}
+
+/* ── WordPress Admin Bar compatibility ─────────────────────────── */
+/*
+ * When the WP admin bar is visible (logged-in users), the admin bar
+ * sits at the top. We offset our bar so they don't overlap.
+ * WordPress adds .admin-bar to <html> automatically.
+ */
+.admin-bar #snb-notification-bar {
+	top: 46px; /* Default WP admin bar height on desktop */
+}
+
+@media screen and (max-width: 782px) {
+	.admin-bar #snb-notification-bar {
+		top: 46px; /* WP admin bar is 46px on mobile too */
+	}
+
+	body.snb-bar-visible {
+		margin-top: 56px; /* Slightly more room on small screens */
+	}
+}
+
+/* ── Fade-in keyframes ─────────────────────────────────────────── */
+@keyframes snb-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* ── Hidden state (set by JS after dismiss) ────────────────────── */
+#snb-notification-bar.snb-hidden {
+	display: none;
+}
